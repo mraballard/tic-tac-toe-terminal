@@ -90,11 +90,7 @@ class TicTacToe
       puts "#{@comp} has won!"
       @gameover = true
     end
-    if @possibleMoves.length < 2
-      draw
-    else
-      printBoard
-    end
+    printBoard
   end
 
   def draw
