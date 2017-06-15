@@ -68,12 +68,12 @@ class TicTacToe
       # Reverse order of move from B2 to 2B to match @board object
       move = move.chars.last + move.chars.first.downcase
       @board[move.chars.first][move.chars.last] = @player
-      if @possibleMoves.length == 0
-        draw
-      elsif winner? == @player
+      if winner? == @player
         printBoard
         puts "#{@player} has won!"
         @gameover = true
+      elsif @possibleMoves.length == 0
+        draw
       else
         computerMove
       end
@@ -89,8 +89,9 @@ class TicTacToe
       printBoard
       puts "#{@comp} has won!"
       @gameover = true
+    elsif @possibleMoves.length == 0
+      draw
     end
-    printBoard
   end
 
   def draw
