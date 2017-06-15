@@ -46,7 +46,7 @@ class TicTacToe
   end
 
   def newMove(player, move)
-    @board[move.chars.last][move.chars.first] = player
+    @board[move.chars.last][move.chars.first.downcase] = player
   end
 
   def endGame?
