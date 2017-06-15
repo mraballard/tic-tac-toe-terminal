@@ -59,17 +59,24 @@ class TicTacToe
   end
 
   def playerMove(move)
-    @possibleMoves.delete(move)
-    # Reverse order of move from B2 to 2B to match @board object
-    move = move.chars.last + move.chars.first.downcase
-    @board[move.chars.first][move.chars.last] = @player
-    if @possibleMoves.length == 0
-      draw
-    elsif winner? == @player
-      puts "#{@player} has won!"
-      @gameover = true
+    if !['a', 'b', 'c'].include?(move.chars.first) || !['1', '2', '3'].include?(move.chars.last)
+      puts "Must be a valid board location."
+    elsif !@possibleMoves.include?(move.downcase)
+      puts "Location already taken, please choose an available space."
     else
-      computerMove
+      @possibleMoves.delete(move)
+      # Reverse order of move from B2 to 2B to match @board object
+      move = move.chars.last + move.chars.first.downcase
+      @board[move.chars.first][move.chars.last] = @player
+      if @possibleMoves.length == 0
+        draw
+      elsif winner? == @player
+        printBoard
+        puts "#{@player} has won!"
+        @gameover = true
+      else
+        computerMove
+      end
     end
   end
 
@@ -79,14 +86,20 @@ class TicTacToe
     @possibleMoves.delete(move)
     @board[move.chars.last][move.chars.first.downcase] = @comp
     if winner? == @comp
+      printBoard
       puts "#{@comp} has won!"
       @gameover = true
     end
-    printBoard
+    if @possibleMoves.length < 2
+      draw
+    else
+      printBoard
+    end
   end
 
   def draw
     @gameover = true
+    printBoard
     puts "The game is a tie. Wah wahhh... :("
     finishGame
   end
