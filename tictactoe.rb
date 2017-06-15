@@ -1,8 +1,5 @@
 require_relative 'ttt'
 
-game = TicTacToe.new
-gameover = false
-
 puts "Welcome to Tic Tac Toe in Ruby \nWhich player do you want to be? X or O?"
 
 player = gets.chomp
@@ -12,17 +9,15 @@ else
   comp = 'X'
 end
 
+game = TicTacToe.new(player)
+
 game.printBoard
 
-while gameover == false
+while game.finishGame == false
   puts "Where do you want to move?"
   move = gets.chomp
 
-  game.newMove(player, move)
-
-  game.printBoard
-
-
+  game.playerMove(move)
 
   if move == 'Q'
     break
