@@ -1,3 +1,8 @@
+###############################################
+### Game Logic for TicTacToe
+### Builds board, possible moves, win / lose / draw logic
+###############################################
+
 class TicTacToe
   def initialize(player)
     @error = nil
@@ -8,6 +13,7 @@ class TicTacToe
       @comp = 'X'
     end
     # Board to record player moves
+    @size =
     @board = {
       "1" => {
         "a" => ' ',
@@ -50,14 +56,29 @@ class TicTacToe
     @winner = nil
   end
 
+  ###############################################
+  ### Function: Check if errors exist
+  ### params: none
+  ### return: error or nil
+  ###############################################
   def checkError
     return @error
   end
 
+  ###############################################
+  ### Function: Clear errors
+  ### params: none
+  ### return: none
+  ###############################################
   def clearError
     @error = nil
   end
 
+  ###############################################
+  ### Function: Clear errors
+  ### params: none
+  ### return: none
+  ###############################################
   def printBoard
     puts @header
     @board.each { |row, value|
@@ -67,6 +88,11 @@ class TicTacToe
     puts @rowDiv
   end
 
+  ###############################################
+  ### Function: Get user input for move
+  ### params: none
+  ### return: none
+  ###############################################
   def getInput
     printBoard
     puts "Where do you want to move? (Q to quit)"
@@ -74,13 +100,18 @@ class TicTacToe
     if move.downcase == 'q'
       @winner = 'Q'
     else
-      playerMove(move)
+      playerMove(move.downcase)
     end
   end
 
+  ###############################################
+  ### Function: Add user's move to the board
+  ### params: board location
+  ### return: none
+  ###############################################
   def playerMove(move)
     if !['a', 'b', 'c'].include?(move.chars.first) || !['1', '2', '3'].include?(move.chars.last)
-      @error = "Must be a valid board location."
+      @error = "You entered an invalid move."
       return @error
     elsif !@possibleMoves.include?(move.downcase)
       @error = "Location already taken, please choose an available space."
@@ -101,10 +132,14 @@ class TicTacToe
       else
         computerMove
       end
-
     end
   end
 
+  ###############################################
+  ### Function: Add computer's move to the board
+  ### params: none
+  ### return: none
+  ###############################################
   def computerMove
     random = rand(@possibleMoves.length)
     move = @possibleMoves[random]
@@ -118,13 +153,17 @@ class TicTacToe
       @winner = 'Draw'
       winner
     end
-
   end
 
+  ###############################################
+  ### Function: Check if there is a winner
+  ### params: none
+  ### return: string 'X' or 'O' if there is a winner
+  ###############################################
   def winner?
     @winners.each { |line|
       check = []
-      line.each {|el|
+      line.each { |el|
         check.push(@board[el.chars.last][el.chars.first])
       }
       if check == @oWin
@@ -135,17 +174,27 @@ class TicTacToe
     }
   end
 
+  ##################################################################
+  ### Function: End the game if there is a win, draw, or user quits
+  ### params: board location
+  ### return: none
+  ##################################################################
   def winner
     printBoard
     if @winner == 'Draw'
       return "The game is a tie. Wah wahhh... :("
     elsif @winner == 'Q'
-      return "So long sucker!"
+      return "Goodbye!"
     else
       return "#{@winner} has won!"
     end
   end
 
+  ##################################################################
+  ### Function: Exits while loop in tictactoe.rb
+  ### params: none
+  ### return: nil || 'X' || 'O'
+  ##################################################################
   def gameover
     return @winner
   end
