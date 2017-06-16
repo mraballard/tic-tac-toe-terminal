@@ -1,5 +1,6 @@
 class TicTacToe
   def initialize(player)
+    @error = nil
     @player = player
     if player == 'X'
       @comp = 'O'
@@ -46,7 +47,15 @@ class TicTacToe
     @header =  '          A   B   C'
     @rowDiv =  '        +---+---+---+'
 
-    @gameover = false
+    @winner = nil
+  end
+
+  def checkError
+    return @error
+  end
+
+  def clearError
+    @error = nil
   end
 
   def printBoard
@@ -58,25 +67,41 @@ class TicTacToe
     puts @rowDiv
   end
 
+  def getInput
+    printBoard
+    puts "Where do you want to move? (Q to quit)"
+    move = gets.chomp
+    if move.downcase == 'q'
+      @winner = 'Q'
+    else
+      playerMove(move)
+    end
+  end
+
   def playerMove(move)
     if !['a', 'b', 'c'].include?(move.chars.first) || !['1', '2', '3'].include?(move.chars.last)
-      puts "Must be a valid board location."
+      @error = "Must be a valid board location."
+      return @error
     elsif !@possibleMoves.include?(move.downcase)
-      puts "Location already taken, please choose an available space."
+      @error = "Location already taken, please choose an available space."
+      return @error
     else
       @possibleMoves.delete(move)
-      # Reverse order of move from B2 to 2B to match @board object
+      # Reverse order of move from 'B2' to '2b' to match @board object
       move = move.chars.last + move.chars.first.downcase
+
       @board[move.chars.first][move.chars.last] = @player
+
+      # Check if the move completes a winning row
       if winner? == @player
         printBoard
-        puts "#{@player} has won!"
-        @gameover = true
+        @winner = @player
       elsif @possibleMoves.length == 0
-        draw
+        @winner = 'Draw'
       else
         computerMove
       end
+
     end
   end
 
@@ -85,20 +110,15 @@ class TicTacToe
     move = @possibleMoves[random]
     @possibleMoves.delete(move)
     @board[move.chars.last][move.chars.first.downcase] = @comp
+
     if winner? == @comp
       printBoard
-      puts "#{@comp} has won!"
-      @gameover = true
+      @winner = @comp
     elsif @possibleMoves.length == 0
-      draw
+      @winner = 'Draw'
+      winner
     end
-  end
 
-  def draw
-    @gameover = true
-    printBoard
-    puts "The game is a tie. Wah wahhh... :("
-    finishGame
   end
 
   def winner?
@@ -115,8 +135,19 @@ class TicTacToe
     }
   end
 
-  def finishGame
-    return @gameover
+  def winner
+    printBoard
+    if @winner == 'Draw'
+      return "The game is a tie. Wah wahhh... :("
+    elsif @winner == 'Q'
+      return "So long sucker!"
+    else
+      return "#{@winner} has won!"
+    end
+  end
+
+  def gameover
+    return @winner
   end
 
 end
