@@ -7,14 +7,14 @@ while player.downcase != 'x' && player != 'o'
   puts "Please choose 'X' or 'O'."
   player = gets.chomp
 end
-game = TicTacToe.new(player.upcase)
+game = TicTacToe.new(player.upcase, 3)
 
 # If player chooses 'O', computer moves first
 if player == 'O'
   game.computerMove
 end
 
-system "clear"
+# system "clear"
 
 while !game.gameover
   if game.checkError
@@ -22,7 +22,7 @@ while !game.gameover
     game.clearError
   end
   game.getInput
-  system "clear"
+  # system "clear"
 end
 
 puts game.winner

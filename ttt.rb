@@ -4,7 +4,7 @@
 ###############################################
 
 class TicTacToe
-  def initialize(player)
+  def initialize(player, size)
     @error = nil
     @player = player
     if player == 'X'
@@ -13,24 +13,33 @@ class TicTacToe
       @comp = 'X'
     end
     # Board to record player moves
-    @size =
-    @board = {
-      "1" => {
-        "a" => ' ',
-        "b" => ' ',
-        "c" => ' ',
-      },
-      "2" => {
-        "a" => ' ',
-        "b" => ' ',
-        "c" => ' ',
-      },
-      "3" => {
-        "a" => ' ',
-        "b" => ' ',
-        "c" => ' ',
+    @alphabet = ("a".."z").to_a
+    @board = {}
+    1.upto(size) { |row|
+      @board[row] = {}
+      0.upto(size - 1) { |column|
+        @board[row][@alphabet[column]] = " "
+        puts @board
       }
     }
+    puts @board
+    # @board = {
+    #   "1" => {
+    #     "a" => ' ',
+    #     "b" => ' ',
+    #     "c" => ' ',
+    #   },
+    #   "2" => {
+    #     "a" => ' ',
+    #     "b" => ' ',
+    #     "c" => ' ',
+    #   },
+    #   "3" => {
+    #     "a" => ' ',
+    #     "b" => ' ',
+    #     "c" => ' ',
+    #   }
+    # }
     # Array to track available spaces for next moves.
     @possibleMoves = ['a1', 'b1', 'c1', 'a2', 'b2', 'c2', 'a3', 'b3', 'c3']
     @winners = [
@@ -121,7 +130,7 @@ class TicTacToe
       # Reverse order of move from 'B2' to '2b' to match @board object
       move = move.chars.last + move.chars.first.downcase
 
-      @board[move.chars.first][move.chars.last] = @player
+      @board[move.chars.first.to_i][move.chars.last] = @player
 
       # Check if the move completes a winning row
       if winner? == @player
@@ -144,7 +153,7 @@ class TicTacToe
     random = rand(@possibleMoves.length)
     move = @possibleMoves[random]
     @possibleMoves.delete(move)
-    @board[move.chars.last][move.chars.first.downcase] = @comp
+    @board[move.chars.last.to_i][move.chars.first] = @comp
 
     if winner? == @comp
       printBoard
@@ -164,7 +173,7 @@ class TicTacToe
     @winners.each { |line|
       check = []
       line.each { |el|
-        check.push(@board[el.chars.last][el.chars.first])
+        check.push(@board[el.chars.last.to_i][el.chars.first])
       }
       if check == @oWin
         return 'O'
