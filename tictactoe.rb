@@ -71,10 +71,9 @@ class TicTacToe
   ### return: none
   ###############################################
   def getInput
-    # system "clear"
+    system "clear"
     printBoard
-    puts "You are #{@player} vs #{@comp}"
-    puts "Possible moves: #{@possibleMoves}"
+    puts "You are player #{@player}"
     puts "Where do you want to move? (Q to quit)"
     move = gets.chomp.downcase
     if move == 'q'
@@ -116,7 +115,7 @@ class TicTacToe
   end
 
   ###############################################
-  ### Function: Add a random computer move to the board
+  ### Function: Add computer move to the board
   ### params: none
   ### return: none
   ###############################################
@@ -131,13 +130,13 @@ class TicTacToe
         move = @possibleMoves[random]
       end
     else
+      # If not first move, run bestMove algorithm
       move = bestMove
     end
 
     # Remove computer's move from possible moves.
     @possibleMoves.delete(move)
 
-    puts "HERE IS THE MOVE> #{move}"
     # Add computer's move to board
     @board[move.chars.last.to_i][move.chars.first] = @comp
 
@@ -145,8 +144,12 @@ class TicTacToe
     winner?
   end
 
+  #############################################################################
+  ### Function: Checks rows, then columns for best available move for computer
+  ### params: none
+  ### return: board location in form "a2"
+  #############################################################################
   def bestMove
-    move = nil
     rows = @board.keys
 
     # Iterate over rows
@@ -154,6 +157,7 @@ class TicTacToe
       # Does row contain a computer's move, a free space, and NO player move?
       if @board[row].value?(@comp) && @board[row].value?(" ") && @board[row].values.uniq.size == 2
           @board[row].keys.each { |col|
+            # Take first available space
             if @board[row][col] == " "
               return col + row.to_s
             end
@@ -169,6 +173,7 @@ class TicTacToe
       }
       # Does column contain a computer's move, a free space, and NO player move?
       if column.uniq.size == 2 && column.include?(" ") && column.include?(@comp)
+        # Take first available space
         return @alphabet[col] + (column.index(" ") + 1).to_s
       end
     }
