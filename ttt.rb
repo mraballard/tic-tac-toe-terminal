@@ -14,55 +14,37 @@ class TicTacToe
     end
     # Board to record player moves
     @alphabet = ("a".."z").to_a
+    @size = size
     @board = {}
-    1.upto(size) { |row|
+    1.upto(@size) { |row|
       @board[row] = {}
-      0.upto(size - 1) { |column|
+      0.upto(@size - 1) { |column|
         @board[row][@alphabet[column]] = " "
-        puts @board
       }
     }
-    puts @board
-    # @board = {
-    #   "1" => {
-    #     "a" => ' ',
-    #     "b" => ' ',
-    #     "c" => ' ',
-    #   },
-    #   "2" => {
-    #     "a" => ' ',
-    #     "b" => ' ',
-    #     "c" => ' ',
-    #   },
-    #   "3" => {
-    #     "a" => ' ',
-    #     "b" => ' ',
-    #     "c" => ' ',
-    #   }
-    # }
+
     # Array to track available spaces for next moves.
     @possibleMoves = ['a1', 'b1', 'c1', 'a2', 'b2', 'c2', 'a3', 'b3', 'c3']
-    @winners = [
-      # Horizontal Winners
-      ['a1', 'b1', 'c1'],
-      ['a2', 'b2', 'c2'],
-      ['a3', 'b3', 'c3'],
-      # Vertical Winners
-      ['a1', 'a2', 'a3'],
-      ['b1', 'b2', 'b3'],
-      ['c1', 'c2', 'c3'],
-      # Diagonal Winners
-      ['a1', 'b2', 'c3'],
-      ['c1', 'b2', 'a3']
-    ]
+    # @winners = [
+    #   # Horizontal Winners
+    #   ['a1', 'b1', 'c1'],
+    #   ['a2', 'b2', 'c2'],
+    #   ['a3', 'b3', 'c3'],
+    #   # Vertical Winners
+    #   ['a1', 'a2', 'a3'],
+    #   ['b1', 'b2', 'b3'],
+    #   ['c1', 'c2', 'c3'],
+    #   # Diagonal Winners
+    #   ['a1', 'b2', 'c3'],
+    #   ['c1', 'b2', 'a3']
+    # ]
     # Define winning combinations
-    @oWin = ['O', 'O', 'O']
-    @xWin = ['X', 'X', 'X']
+    # @oWin = ['O', 'O', 'O']
+    # @xWin = ['X', 'X', 'X']
     # Board graphics
     @header =  '          A   B   C'
     @rowDiv =  '        +---+---+---+'
 
-    @winner = nil
   end
 
   ###############################################
@@ -103,13 +85,14 @@ class TicTacToe
   ### return: none
   ###############################################
   def getInput
+    system "clear"
     printBoard
     puts "Where do you want to move? (Q to quit)"
-    move = gets.chomp
-    if move.downcase == 'q'
-      @winner = 'Q'
+    move = gets.chomp.downcase
+    if move == 'q'
+      winner(move)
     else
-      playerMove(move.downcase)
+      playerMove(move)
     end
   end
 
@@ -122,23 +105,19 @@ class TicTacToe
     if !['a', 'b', 'c'].include?(move.chars.first) || !['1', '2', '3'].include?(move.chars.last)
       @error = "You entered an invalid move."
       return @error
-    elsif !@possibleMoves.include?(move.downcase)
+    elsif !@possibleMoves.include?(move)
       @error = "Location already taken, please choose an available space."
       return @error
     else
       @possibleMoves.delete(move)
       # Reverse order of move from 'B2' to '2b' to match @board object
-      move = move.chars.last + move.chars.first.downcase
+      move = move.chars.last + move.chars.first
 
       @board[move.chars.first.to_i][move.chars.last] = @player
 
       # Check if the move completes a winning row
-      if winner? == @player
-        printBoard
-        @winner = @player
-      elsif @possibleMoves.length == 0
-        @winner = 'Draw'
-      else
+      winner?
+      unless @possibleMoves.length == 0
         computerMove
       end
     end
@@ -155,13 +134,8 @@ class TicTacToe
     @possibleMoves.delete(move)
     @board[move.chars.last.to_i][move.chars.first] = @comp
 
-    if winner? == @comp
-      printBoard
-      @winner = @comp
-    elsif @possibleMoves.length == 0
-      @winner = 'Draw'
-      winner
-    end
+    winner?
+
   end
 
   ###############################################
@@ -170,17 +144,48 @@ class TicTacToe
   ### return: string 'X' or 'O' if there is a winner
   ###############################################
   def winner?
-    @winners.each { |line|
-      check = []
-      line.each { |el|
-        check.push(@board[el.chars.last.to_i][el.chars.first])
-      }
-      if check == @oWin
-        return 'O'
-      elsif check == @xWin
-        return 'X'
+    1.upto(@size) { |row|
+      # Check each row for equality
+      # Does row contain a player's move?
+      if @board[row].value?('X') || @board[row].value?('O')
+        if @board[row].values.uniq.size == 1
+          winner(@board[row].values.uniq[0])
+        end
       end
     }
+
+    # Check each column for equality
+    rows = @board.keys
+    0.upto(@size - 1) { |col|
+      column = []
+      rows.each { |row|
+        column.push(@board[row][@alphabet[col]])
+      }
+      if column.uniq.size == 1 && column.uniq[0] != ' '
+        winner(column.uniq[0])
+      end
+    }
+
+    if @possibleMoves.length == 0
+      winner('Draw')
+    end
+
+    # @board.each { |k,v|
+    #   if k.value?('X') || k.value?('O')
+    #
+    # }
+
+    # @winners.each { |line|
+    #   check = []
+    #   line.each { |el|
+    #     check.push(@board[el.chars.last.to_i][el.chars.first])
+    #   }
+    #   if check == @oWin
+    #     return 'O'
+    #   elsif check == @xWin
+    #     return 'X'
+    #   end
+    # }
   end
 
   ##################################################################
@@ -188,24 +193,24 @@ class TicTacToe
   ### params: board location
   ### return: none
   ##################################################################
-  def winner
-    printBoard
-    if @winner == 'Draw'
-      return "The game is a tie. Wah wahhh... :("
-    elsif @winner == 'Q'
-      return "Goodbye!"
+  def winner(player)
+    system "clear"
+    if player == 'Draw'
+      printBoard
+      puts "The game is a tie. Wah wahhh... :("
+      endGame
+    elsif player == 'q'
+      puts "Goodbye!"
+      endGame
     else
-      return "#{@winner} has won!"
+      printBoard
+      puts "#{player} has won!"
+      endGame
     end
   end
 
-  ##################################################################
-  ### Function: Exits while loop in tictactoe.rb
-  ### params: none
-  ### return: nil || 'X' || 'O'
-  ##################################################################
-  def gameover
-    return @winner
+  def endGame
+    exit
   end
 
 end
