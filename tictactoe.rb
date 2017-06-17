@@ -13,19 +13,20 @@ class TicTacToe
       @comp = 'X'
     end
 
-    # Board to record player moves
     @alphabet = ("a".."z").to_a
     @size = size
+    @possibleMoves = []
     @board = {}
+    # Set up board
     1.upto(@size) { |row|
       @board[row] = {}
       0.upto(@size - 1) { |column|
+        # Array to track available spaces for next moves.
+        @possibleMoves.push(@alphabet[column] + row.to_s)
+
         @board[row][@alphabet[column]] = " "
       }
     }
-
-    # Array to track available spaces for next moves.
-    @possibleMoves = ['a1', 'b1', 'c1', 'a2', 'b2', 'c2', 'a3', 'b3', 'c3']
 
     # Board graphics
     @header =  '          A   B   C'
@@ -70,8 +71,10 @@ class TicTacToe
   ### return: none
   ###############################################
   def getInput
-    system "clear"
+    # system "clear"
     printBoard
+    puts "You are #{@player} vs #{@comp}"
+    puts "Possible moves: #{@possibleMoves}"
     puts "Where do you want to move? (Q to quit)"
     move = gets.chomp.downcase
     if move == 'q'
@@ -118,11 +121,61 @@ class TicTacToe
   ### return: none
   ###############################################
   def computerMove
-    random = rand(@possibleMoves.length)
-    move = @possibleMoves[random]
+    # Check if this is computer's first move
+    if @possibleMoves.length >= (@size ** 2 - 1)
+      # Pick middle square if available, else pick random
+      if @possibleMoves.include?("b2")
+        move = "b2"
+      else
+        random = rand(@possibleMoves.length)
+        move = @possibleMoves[random]
+      end
+    else
+      move = bestMove
+    end
+
+    # Remove computer's move from possible moves.
     @possibleMoves.delete(move)
+
+    puts "HERE IS THE MOVE> #{move}"
+    # Add computer's move to board
     @board[move.chars.last.to_i][move.chars.first] = @comp
+
+    # Check for a winner
     winner?
+  end
+
+  def bestMove
+    move = nil
+    rows = @board.keys
+
+    # Iterate over rows
+    rows.each { |row|
+      # Does row contain a computer's move, a free space, and NO player move?
+      if @board[row].value?(@comp) && @board[row].value?(" ") && @board[row].values.uniq.size == 2
+          @board[row].keys.each { |col|
+            if @board[row][col] == " "
+              return col + row.to_s
+            end
+          }
+      end
+    }
+
+    # Iterate over columns
+    0.upto(@size - 1) { |col|
+      column = []
+      rows.each { |row|
+        column.push(@board[row][@alphabet[col]])
+      }
+      # Does column contain a computer's move, a free space, and NO player move?
+      if column.uniq.size == 2 && column.include?(" ") && column.include?(@comp)
+        return @alphabet[col] + (column.index(" ") + 1).to_s
+      end
+    }
+
+    # If no ideal move has been found in a row or column, generate random move
+    random = rand(@possibleMoves.length)
+    return @possibleMoves[random]
   end
 
   ###############################################
