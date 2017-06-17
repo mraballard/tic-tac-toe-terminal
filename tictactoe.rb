@@ -113,7 +113,7 @@ class TicTacToe
   end
 
   ###############################################
-  ### Function: Add computer's move to the board
+  ### Function: Add a random computer move to the board
   ### params: none
   ### return: none
   ###############################################

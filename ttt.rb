@@ -1,4 +1,4 @@
-require_relative 'ttt'
+require_relative 'tictactoe'
 system "clear"
 puts "Welcome to Tic Tac Toe in Ruby \nWhich player do you want to be? X or O?"
 
