@@ -12,6 +12,7 @@ class TicTacToe
     else
       @comp = 'X'
     end
+
     # Board to record player moves
     @alphabet = ("a".."z").to_a
     @size = size
@@ -29,7 +30,6 @@ class TicTacToe
     # Board graphics
     @header =  '          A   B   C'
     @rowDiv =  '        +---+---+---+'
-
   end
 
   ###############################################
@@ -51,7 +51,7 @@ class TicTacToe
   end
 
   ###############################################
-  ### Function: Clear errors
+  ### Function: Prints board to terminal
   ### params: none
   ### return: none
   ###############################################
@@ -70,7 +70,7 @@ class TicTacToe
   ### return: none
   ###############################################
   def getInput
-    # system "clear"
+    system "clear"
     printBoard
     puts "Where do you want to move? (Q to quit)"
     move = gets.chomp.downcase
@@ -95,13 +95,17 @@ class TicTacToe
       return @error
     else
       @possibleMoves.delete(move)
-      # Reverse order of move from 'B2' to '2b' to match @board object
+
+      # Reverse order of move from 'b2' to '2b' to match @board object
       move = move.chars.last + move.chars.first
 
+      # Add move to board
       @board[move.chars.first.to_i][move.chars.last] = @player
 
       # Check if the move completes a winning row
       winner?
+
+      # If that was the last available move, skip computer move
       unless @possibleMoves.length == 0
         computerMove
       end
@@ -118,11 +122,14 @@ class TicTacToe
     move = @possibleMoves[random]
     @possibleMoves.delete(move)
     @board[move.chars.last.to_i][move.chars.first] = @comp
-
     winner?
-
   end
 
+  ###############################################
+  ### Function: Check if there is a winning row
+  ### params: none
+  ### return: none
+  ###############################################
   def checkRowWinner
     # Check each row for equality
     1.upto(@size) { |row|
@@ -135,6 +142,11 @@ class TicTacToe
     }
   end
 
+  ###############################################
+  ### Function: Check if there is a winning column
+  ### params: none
+  ### return: none
+  ###############################################
   def checkColumnWinner
     # Check each column for equality
     rows = @board.keys
@@ -149,6 +161,11 @@ class TicTacToe
     }
   end
 
+  ###############################################
+  ### Function: Check if there is a winning diagonal
+  ### params: none
+  ### return: none
+  ###############################################
   def checkDiagonalWinner
     # Check Top-left to Bottom-right Diagonal equality
     result = []
@@ -160,7 +177,7 @@ class TicTacToe
       winner(result.uniq[0])
     end
 
-    # Check Top-left to Bottom-right Diagonal equality
+    # Check Top-right to Bottom-left Diagonal equality
     result = []
     rows.reverse.each_with_index {|row, index|
       result.push(@board[row][@alphabet[index]])
@@ -169,10 +186,11 @@ class TicTacToe
       winner(result.uniq[0])
     end
   end
+
   ###############################################
-  ### Function: Check if there is a winner
+  ### Function: Check if there is a winner or a draw
   ### params: none
-  ### return: string 'X' or 'O' if there is a winner
+  ### return: none
   ###############################################
   def winner?
     checkRowWinner
@@ -184,11 +202,10 @@ class TicTacToe
     if @possibleMoves.length == 0
       winner('Draw')
     end
-
   end
 
   ##################################################################
-  ### Function: End the game if there is a win, draw, or user quits
+  ### Function: Ends the game if there is a win, draw, or user quits
   ### params: board location
   ### return: none
   ##################################################################
