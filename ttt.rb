@@ -25,22 +25,7 @@ class TicTacToe
 
     # Array to track available spaces for next moves.
     @possibleMoves = ['a1', 'b1', 'c1', 'a2', 'b2', 'c2', 'a3', 'b3', 'c3']
-    # @winners = [
-    #   # Horizontal Winners
-    #   ['a1', 'b1', 'c1'],
-    #   ['a2', 'b2', 'c2'],
-    #   ['a3', 'b3', 'c3'],
-    #   # Vertical Winners
-    #   ['a1', 'a2', 'a3'],
-    #   ['b1', 'b2', 'b3'],
-    #   ['c1', 'c2', 'c3'],
-    #   # Diagonal Winners
-    #   ['a1', 'b2', 'c3'],
-    #   ['c1', 'b2', 'a3']
-    # ]
-    # Define winning combinations
-    # @oWin = ['O', 'O', 'O']
-    # @xWin = ['X', 'X', 'X']
+
     # Board graphics
     @header =  '          A   B   C'
     @rowDiv =  '        +---+---+---+'
@@ -85,7 +70,7 @@ class TicTacToe
   ### return: none
   ###############################################
   def getInput
-    system "clear"
+    # system "clear"
     printBoard
     puts "Where do you want to move? (Q to quit)"
     move = gets.chomp.downcase
@@ -138,14 +123,9 @@ class TicTacToe
 
   end
 
-  ###############################################
-  ### Function: Check if there is a winner
-  ### params: none
-  ### return: string 'X' or 'O' if there is a winner
-  ###############################################
-  def winner?
+  def checkRowWinner
+    # Check each row for equality
     1.upto(@size) { |row|
-      # Check each row for equality
       # Does row contain a player's move?
       if @board[row].value?('X') || @board[row].value?('O')
         if @board[row].values.uniq.size == 1
@@ -153,7 +133,9 @@ class TicTacToe
         end
       end
     }
+  end
 
+  def checkColumnWinner
     # Check each column for equality
     rows = @board.keys
     0.upto(@size - 1) { |col|
@@ -165,27 +147,44 @@ class TicTacToe
         winner(column.uniq[0])
       end
     }
+  end
 
+  def checkDiagonalWinner
+    # Check Top-left to Bottom-right Diagonal equality
+    result = []
+    rows = @board.keys
+    rows.each_with_index {|row, index|
+      result.push(@board[row][@alphabet[index]])
+    }
+    if result.uniq.size == 1 && result.uniq[0] != ' '
+      winner(result.uniq[0])
+    end
+
+    # Check Top-left to Bottom-right Diagonal equality
+    result = []
+    rows.reverse.each_with_index {|row, index|
+      result.push(@board[row][@alphabet[index]])
+    }
+    if result.uniq.size == 1 && result.uniq[0] != ' '
+      winner(result.uniq[0])
+    end
+  end
+  ###############################################
+  ### Function: Check if there is a winner
+  ### params: none
+  ### return: string 'X' or 'O' if there is a winner
+  ###############################################
+  def winner?
+    checkRowWinner
+    checkColumnWinner
+    checkDiagonalWinner
+
+    # If none of the winner checks results in a win, check
+    # for available spaces on the board. If none, game ends.
     if @possibleMoves.length == 0
       winner('Draw')
     end
 
-    # @board.each { |k,v|
-    #   if k.value?('X') || k.value?('O')
-    #
-    # }
-
-    # @winners.each { |line|
-    #   check = []
-    #   line.each { |el|
-    #     check.push(@board[el.chars.last.to_i][el.chars.first])
-    #   }
-    #   if check == @oWin
-    #     return 'O'
-    #   elsif check == @xWin
-    #     return 'X'
-    #   end
-    # }
   end
 
   ##################################################################
