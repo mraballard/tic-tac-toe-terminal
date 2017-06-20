@@ -9,7 +9,7 @@ class TicTacToe
   ### params: Player (X or O), size of board
   ### return: none
   ###############################################
-  def initialize(player, size)
+  def initialize(player, size = 3)
     if player.downcase != 'x' && player != 'o'
       raise ArgumentError.new("Player must be 'X' or 'O'.")
     end
