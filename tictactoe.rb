@@ -4,7 +4,19 @@
 ###############################################
 
 class TicTacToe
+  ###############################################
+  ### Function: Initializes class
+  ### params: Player (X or O), size of board
+  ### return: none
+  ###############################################
   def initialize(player, size)
+    if player.downcase != 'x' && player != 'o'
+      raise ArgumentError.new("Player must be 'X' or 'O'.")
+    end
+
+    if size < 3 || size > 26
+      raise ArgumentError.new("Table size must be between 3 and 26.")
+    end
     @error = nil
     @player = player
     if player == 'X'
@@ -12,7 +24,6 @@ class TicTacToe
     else
       @comp = 'X'
     end
-
     @alphabet = ("a".."z").to_a
     @size = size
     @possibleMoves = []
@@ -27,10 +38,6 @@ class TicTacToe
         @board[row][@alphabet[column]] = " "
       }
     }
-
-    # Board graphics
-    @header =  '          A   B   C'
-    @rowDiv =  '        +---+---+---+'
   end
 
   ###############################################
@@ -57,12 +64,19 @@ class TicTacToe
   ### return: none
   ###############################################
   def printBoard
-    puts @header
-    @board.each { |row, value|
-      puts @rowDiv
-      puts "    #{row}   | #{value["a"]} | #{value["b"]} | #{value["c"]} |"
+    print  ' ' * 10
+    @board.values[0].each { |key, val|
+      print "#{key.upcase}   "
     }
-    puts @rowDiv
+    @board.each { |row, col|
+      puts "\n" + " " * 8 + "+---" * @size + "+"
+      print "    #{row}   |"
+      col.each { |key, val|
+        print  " #{val} |"
+      }
+    }
+    puts
+    puts " " * 8 + "+---" * @size + "+"
   end
 
   ###############################################
@@ -89,7 +103,8 @@ class TicTacToe
   ### return: none
   ###############################################
   def playerMove(move)
-    if !['a', 'b', 'c'].include?(move.chars.first) || !['1', '2', '3'].include?(move.chars.last)
+    print @board.values[0].keys
+    if !@board.values[0].keys.include?(move.chars.first) || !@board.keys.include?(move.chars.last.to_i)
       @error = "You entered an invalid move."
       return @error
     elsif !@possibleMoves.include?(move)
