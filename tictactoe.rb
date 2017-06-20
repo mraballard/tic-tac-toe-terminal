@@ -14,7 +14,7 @@ class TicTacToe
       raise ArgumentError.new("Player must be 'X' or 'O'.")
     end
 
-    if size < 3 || size > 26
+    if size < 3 || size > 9
       raise ArgumentError.new("Table size must be between 3 and 26.")
     end
     @error = nil
@@ -24,7 +24,7 @@ class TicTacToe
     else
       @comp = 'X'
     end
-    @alphabet = ("a".."z").to_a
+    @alphabet = ("a".."i").to_a
     @size = size
     @possibleMoves = []
     @board = {}
